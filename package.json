@@ -1,0 +1,31 @@
+{
+  "name": "product-catalog-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API de catálogo de productos con PostgreSQL y Redis, verificada con Testcontainers",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "fastify": "^5.6.1",
+    "pg": "^8.16.3",
+    "redis": "^5.8.2"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "^11.7.1",
+    "@testcontainers/redis": "^11.7.1",
+    "@types/node": "^24.5.2",
+    "@types/pg": "^8.15.5",
+    "testcontainers": "^11.7.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.11"
+  }
+}
