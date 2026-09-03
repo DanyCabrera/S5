@@ -19,13 +19,24 @@ HTTP (Fastify)
 | `src/adapters/redis-product-cache.ts` | Get/set/delete con TTL configurable |
 | `src/db/schema.sql` | Esquema aplicado al arranque de la app y de la suite |
 
-Flujo de consulta por ID (cache-aside):
+### Flujo PostgreSQL–Redis (cache-aside)
 
-1. Se busca `product:{id}` en Redis.
-2. Si no hay entrada, se lee PostgreSQL.
-3. Si el producto existe, se guarda en Redis con `CACHE_TTL_SECONDS` y la respuesta indica `source: "database"`.
-4. Si la entrada existe, se responde con `source: "cache"` sin consultar PostgreSQL.
-5. Crear o actualizar invalida la clave en Redis para no servir datos obsoletos.
+```mermaid
+flowchart LR
+  C[Cliente] --> API[ProductService]
+
+  API -->|1. ¿hay product:id?| R[(Redis)]
+  R -->|sí: cache hit| API
+  API -->|source: cache| C
+
+  R -->|no: cache miss| PG[(PostgreSQL)]
+  PG -->|existe| API
+  API -->|2. guardar con TTL| R
+  API -->|source: database| C
+  PG -->|no existe| E[404]
+```
+
+Escritura: `POST` / `PATCH` actualizan PostgreSQL e **invalidan** la clave en Redis. La siguiente lectura vuelve a la base y recachea.
 
 ## Requisitos
 
